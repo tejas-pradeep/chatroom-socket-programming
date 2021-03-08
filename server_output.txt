@@ -1,0 +1,7 @@
+----- Welcome to CS 3251 chatroom !!! -----
+Tiggy has joined!
+Tiggy: :mytime
+Tiggy: :+1hr
+Tiggy: feeling happyTiggy has left the chatroom.
+Tiggy has joined!
+Tiggy: Time is : 16:56:02Tiggy: Time is : 17:56:08Tiggy: feeling happyTiggy: feeling sadTiggy has left the chatroom.

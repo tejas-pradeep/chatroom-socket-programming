@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <pthread.h>
+#include <time.h>
 int loop_flag = 1;
 void *recieving(void * sock) {
     int server_socket = *((int *) sock);
@@ -80,10 +81,40 @@ int main(int argc , char *argv[])
     pthread_create(&thread, NULL, recieving, (void *) &socket_desc);
 
     // Send messages to server
-    char message[1024];
+    char *message = (char *)malloc(2000);
     int read_size;
     while(loop_flag) {
         fgets(message, 1024, stdin);
+        if (strlen(message) > 1025) {
+            loop_flag = 0;
+            puts("Error: You have entered more than 1024 charecters.");
+            free(message);
+            break;
+        }
+        if (strcmp(message, ":)\n") == 0) {
+            strcpy(message, "feeling happy");
+        } else if (strcmp(message, ":(\n") == 0) {
+            strcpy(message, "feeling sad");
+        } else if (strcmp(message, ":mytime\n") == 0) {
+            time_t now;
+            time(&now);
+            struct tm *local = localtime(&now);
+            int hours = local->tm_hour, minutes = local->tm_min, sec = local->tm_sec;
+            sprintf(message, "Time is : %02d:%02d:%02d", hours, minutes, sec);
+        } else if (strcmp(message, ":+1hr\n") == 0) {
+            time_t now;
+            time(&now);
+            struct tm *local = localtime(&now);
+            int hours = local->tm_hour + 1, minutes = local->tm_min, sec = local->tm_sec;
+            if (hours > 24) {
+                hours = 0;
+            }
+            sprintf(message, "Time is : %02d:%02d:%02d", hours, minutes, sec);
+        } else if (strcmp(message, ":Exit\n") == 0) {
+            send(socket_desc, ":Exit", strlen(message), 0);
+            loop_flag = 0;
+            break;
+        }
         char updated_message[1024];
         sprintf(updated_message, "%s: %s", username, message);
         send(socket_desc, updated_message, strlen(updated_message), 0);
